@@ -1,22 +1,17 @@
 
+import { useNavigate } from "react-router-dom";
+
 import Button from "../../../components/Button";
 import Table from "../../../components/Table";
 
-import type {
-  ILocacao,
+import type { ILocacao } from "../../../models/locacao.model";
+import type { ICliente } from "../../../models/cliente.model";
+import type { IVeiculo } from "../../../models/veiculo.model";
+import type { IModelo } from "../../../models/modelo.model";
+
+import {
+  calcularDiarias,
 } from "../../../models/locacao.model";
-
-import type {
-  ICliente,
-} from "../../../models/cliente.model";
-
-import type {
-  IVeiculo,
-} from "../../../models/veiculo.model";
-
-import type {
-  IModelo,
-} from "../../../models/modelo.model";
 
 interface LocacaoTableProps {
   locacoes: ILocacao[];
@@ -25,6 +20,7 @@ interface LocacaoTableProps {
   modelos: IModelo[];
   onEdit: (locacao: ILocacao) => void;
   onCancel: (id: string) => void;
+  onDelete?: (locacao: ILocacao) => void;
 }
 
 export default function LocacaoTable({
@@ -34,9 +30,27 @@ export default function LocacaoTable({
   modelos,
   onEdit,
   onCancel,
+  onDelete,
 }: LocacaoTableProps) {
-  function formatarData(data: string): string {
-    return data.split("-").reverse().join("/");
+  const navigate = useNavigate();
+
+  function formatarData(data?: string): string {
+    if (!data) {
+      return "-";
+    }
+
+    return data
+      .slice(0, 10)
+      .split("-")
+      .reverse()
+      .join("/");
+  }
+
+  function moeda(valor: number): string {
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   }
 
   return (
@@ -49,11 +63,14 @@ export default function LocacaoTable({
         },
         {
           titulo: "Cliente",
-          render: (locacao) =>
-            clientes.find(
-              (cliente) =>
-                cliente.id === locacao.clienteId
-            )?.nome ?? "-",
+          render: (locacao) => {
+            const cliente = clientes.find(
+              (item) =>
+                item.id === locacao.clienteId
+            );
+
+            return cliente?.nome ?? "-";
+          },
         },
         {
           titulo: "Veículo",
@@ -68,9 +85,11 @@ export default function LocacaoTable({
                 item.id === veiculo?.modeloId
             );
 
-            return (
-              `${modelo?.nome ?? "-"} - ${veiculo?.placa ?? "-"}`
-            );
+            if (!veiculo) {
+              return "-";
+            }
+
+            return `${modelo?.nome ?? "-"} - ${veiculo.placa}`;
           },
         },
         {
@@ -86,32 +105,67 @@ export default function LocacaoTable({
             ),
         },
         {
+          titulo: "Devolução real",
+          render: (locacao) =>
+            formatarData(
+              locacao.dataDevolucaoReal
+            ),
+        },
+        {
+          titulo: "Diárias",
+          render: (locacao) => {
+            if (locacao.dataDevolucaoReal) {
+              return Math.max(
+                1,
+                calcularDiarias(
+                  locacao.dataRetirada,
+                  locacao.dataDevolucaoReal.slice(0, 10)
+                )
+              );
+            }
+
+            return calcularDiarias(
+              locacao.dataRetirada,
+              locacao.dataDevolucaoPrevista
+            );
+          },
+        },
+        {
+          titulo: "Km retirada",
+          render: (locacao) =>
+            locacao.kmRetirada.toLocaleString(
+              "pt-BR"
+            ),
+        },
+        {
+          titulo: "Km devolução",
+          render: (locacao) =>
+            locacao.kmDevolucao?.toLocaleString(
+              "pt-BR"
+            ) ?? "-",
+        },
+        {
           titulo: "Valor total",
           render: (locacao) =>
-            locacao.valorTotal.toLocaleString(
-              "pt-BR",
-              {
-                style: "currency",
-                currency: "BRL",
-              }
-            ),
+            moeda(locacao.valorTotal),
         },
         {
           titulo: "Status",
           render: (locacao) => {
-            let cor = "bg-primary";
-            let texto = "Aberta";
+            let cor = "";
+            let texto = "";
 
-            if (
-              locacao.status === "FINALIZADA"
-            ) {
+            if (locacao.status === "ABERTA") {
+              cor = "bg-warning text-dark";
+              texto = "Aberta";
+            }
+
+            if (locacao.status === "FINALIZADA") {
               cor = "bg-success";
               texto = "Finalizada";
             }
 
-            if (
-              locacao.status === "CANCELADA"
-            ) {
+            if (locacao.status === "CANCELADA") {
               cor = "bg-danger";
               texto = "Cancelada";
             }
@@ -126,11 +180,27 @@ export default function LocacaoTable({
         {
           titulo: "Ações",
           render: (locacao) => (
-            <div className="d-flex gap-2">
-              {locacao.status === "ABERTA" ? (
+            <div className="d-flex flex-wrap gap-1">
+              <Button
+                variant="primary"
+                className="btn-sm"
+                disabled={!locacao.id}
+                onClick={() => {
+                  if (locacao.id) {
+                    navigate(
+                      `/locacoes/${locacao.id}`
+                    );
+                  }
+                }}
+              >
+                Visualizar
+              </Button>
+
+              {locacao.status === "ABERTA" && (
                 <>
                   <Button
                     variant="warning"
+                    className="btn-sm"
                     onClick={() =>
                       onEdit(locacao)
                     }
@@ -140,6 +210,8 @@ export default function LocacaoTable({
 
                   <Button
                     variant="danger"
+                    className="btn-sm"
+                    disabled={!locacao.id}
                     onClick={() => {
                       if (locacao.id) {
                         onCancel(locacao.id);
@@ -149,11 +221,20 @@ export default function LocacaoTable({
                     Cancelar
                   </Button>
                 </>
-              ) : (
-                <span className="text-muted">
-                  Encerrada
-                </span>
               )}
+
+              {locacao.status === "CANCELADA" &&
+                onDelete && (
+                  <Button
+                    variant="danger"
+                    className="btn-sm"
+                    onClick={() =>
+                      onDelete(locacao)
+                    }
+                  >
+                    Excluir
+                  </Button>
+                )}
             </div>
           ),
         },
