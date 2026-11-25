@@ -7,6 +7,7 @@ import CategoriaPages from "../pages/CategoriaPages";
 import ModeloPages from "../pages/ModeloPages";
 import VeiculoPages from "../pages/VeiculoPages";
 import ManutencaoPages from "../pages/ManutencaoPages";
+import ClientePages from "../pages/ClientePages";
 
 import Alert from "../components/Alert";
 
@@ -42,7 +43,7 @@ export default function AppRouters() {
 
       <Route
         path="/clientes"
-        element={<EmDesenvolvimento titulo="Clientes" />}
+        element={<ClientePages />}
       />
 
       <Route
