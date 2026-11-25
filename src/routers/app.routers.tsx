@@ -12,24 +12,9 @@ import LocacaoPages from "../pages/LocacaoPages";
 import ContratoPages from "../pages/ContratoPages";
 import VistoriaPages from "../pages/VistoriaPages";
 import PagamentoPages from "../pages/PagamentoPages";
+import NotaFiscalPages from "../pages/NotaFiscalPages";
 
 import Alert from "../components/Alert";
-
-function EmDesenvolvimento({
-  titulo,
-}: {
-  titulo: string;
-}) {
-  return (
-    <div className="container mt-4">
-      <h2 className="mb-4">{titulo}</h2>
-
-      <Alert variant="info">
-        Este módulo está em desenvolvimento.
-      </Alert>
-    </div>
-  );
-}
 
 export default function AppRouters() {
   return (
@@ -91,9 +76,7 @@ export default function AppRouters() {
 
       <Route
         path="/notas-fiscais"
-        element={
-          <EmDesenvolvimento titulo="Notas Fiscais" />
-        }
+        element={<NotaFiscalPages />}
       />
 
       <Route
