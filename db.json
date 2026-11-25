@@ -115,8 +115,44 @@
       "endereco": "Goiânia - GO"
     }
   ],
-  "locacoes": [],
-  "contratos": [],
+  "locacoes": [
+    {
+      "clienteId": "1",
+      "veiculoId": "1",
+      "dataRetirada": "2026-11-25",
+      "dataDevolucaoPrevista": "2026-11-28",
+      "kmRetirada": 15000,
+      "valorTotal": 360,
+      "status": "CANCELADA",
+      "id": "gPI4i0Zo94c"
+    },
+    {
+      "clienteId": "1",
+      "veiculoId": "1",
+      "dataRetirada": "2026-11-25",
+      "dataDevolucaoPrevista": "2026-11-28",
+      "kmRetirada": 15000,
+      "valorTotal": 360,
+      "status": "ABERTA",
+      "id": "YXHg7-8e3lg"
+    }
+  ],
+  "contratos": [
+    {
+      "numero": "CTR-gPI4i0Zo94c",
+      "dataEmissao": "2026-11-25",
+      "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
+      "locacaoId": "gPI4i0Zo94c",
+      "id": "6ATX2iB330M"
+    },
+    {
+      "numero": "CTR-YXHg7-8e3lg",
+      "dataEmissao": "2026-11-25",
+      "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
+      "locacaoId": "YXHg7-8e3lg",
+      "id": "IWoPkmAJLVI"
+    }
+  ],
   "vistorias": [],
   "pagamentos": [],
   "notasFiscais": [],

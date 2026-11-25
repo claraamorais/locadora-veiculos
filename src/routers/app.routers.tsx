@@ -8,10 +8,15 @@ import ModeloPages from "../pages/ModeloPages";
 import VeiculoPages from "../pages/VeiculoPages";
 import ManutencaoPages from "../pages/ManutencaoPages";
 import ClientePages from "../pages/ClientePages";
+import LocacaoPages from "../pages/LocacaoPages";
 
 import Alert from "../components/Alert";
 
-function EmDesenvolvimento({ titulo }: { titulo: string }) {
+function EmDesenvolvimento({
+  titulo,
+}: {
+  titulo: string;
+}) {
   return (
     <div className="container mt-4">
       <h2 className="mb-4">{titulo}</h2>
@@ -28,13 +33,25 @@ export default function AppRouters() {
     <Routes>
       <Route path="/" element={<HomePages />} />
 
-      <Route path="/marcas" element={<MarcaPages />} />
+      <Route
+        path="/marcas"
+        element={<MarcaPages />}
+      />
 
-      <Route path="/categorias" element={<CategoriaPages />} />
+      <Route
+        path="/categorias"
+        element={<CategoriaPages />}
+      />
 
-      <Route path="/modelos" element={<ModeloPages />} />
+      <Route
+        path="/modelos"
+        element={<ModeloPages />}
+      />
 
-      <Route path="/veiculos" element={<VeiculoPages />} />
+      <Route
+        path="/veiculos"
+        element={<VeiculoPages />}
+      />
 
       <Route
         path="/manutencoes"
@@ -48,27 +65,35 @@ export default function AppRouters() {
 
       <Route
         path="/locacoes"
-        element={<EmDesenvolvimento titulo="Locações" />}
+        element={<LocacaoPages />}
       />
 
       <Route
         path="/contratos"
-        element={<EmDesenvolvimento titulo="Contratos" />}
+        element={
+          <EmDesenvolvimento titulo="Contratos" />
+        }
       />
 
       <Route
         path="/vistorias"
-        element={<EmDesenvolvimento titulo="Vistorias" />}
+        element={
+          <EmDesenvolvimento titulo="Vistorias" />
+        }
       />
 
       <Route
         path="/pagamentos"
-        element={<EmDesenvolvimento titulo="Pagamentos" />}
+        element={
+          <EmDesenvolvimento titulo="Pagamentos" />
+        }
       />
 
       <Route
         path="/notas-fiscais"
-        element={<EmDesenvolvimento titulo="Notas Fiscais" />}
+        element={
+          <EmDesenvolvimento titulo="Notas Fiscais" />
+        }
       />
 
       <Route
