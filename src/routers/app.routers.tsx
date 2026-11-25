@@ -6,6 +6,7 @@ import MarcaPages from "../pages/MarcaPages";
 import CategoriaPages from "../pages/CategoriaPages";
 import ModeloPages from "../pages/ModeloPages";
 import VeiculoPages from "../pages/VeiculoPages";
+import ManutencaoPages from "../pages/ManutencaoPages";
 
 import Alert from "../components/Alert";
 
@@ -36,7 +37,7 @@ export default function AppRouters() {
 
       <Route
         path="/manutencoes"
-        element={<EmDesenvolvimento titulo="Manutenções" />}
+        element={<ManutencaoPages />}
       />
 
       <Route
