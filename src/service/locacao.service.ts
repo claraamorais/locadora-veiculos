@@ -1,7 +1,6 @@
 
-import type {
-  ILocacao,
-} from "../models/locacao.model";
+import type { ILocacao } from "../models/locacao.model";
+import type { IVeiculo } from "../models/veiculo.model";
 
 import {
   calcularValorLocacao,
@@ -10,35 +9,17 @@ import {
 
 import { request, remover } from "./api.service";
 
-import {
-  buscarClientePorId,
-} from "./cliente.service";
+import { buscarClientePorId } from "./cliente.service";
 
 import {
   buscarVeiculoPorId,
   listarVeiculos,
 } from "./veiculo.service";
 
-import {
-  listarModelos,
-} from "./modelo.service";
-
-import {
-  listarCategorias,
-} from "./categoria.service";
-
-import {
-  listarManutencoes,
-} from "./manutencao.service";
-
-import {
-  criarContrato,
-  listarContratos,
-} from "./contrato.service";
-
-import type {
-  IVeiculo,
-} from "../models/veiculo.model";
+import { buscarModeloPorId } from "./modelo.service";
+import { buscarCategoriaPorId } from "./categoria.service";
+import { listarManutencoes } from "./manutencao.service";
+import { criarContrato } from "./contrato.service";
 
 export async function listarLocacoes(): Promise<ILocacao[]> {
   return request<ILocacao[]>("locacoes");
@@ -50,31 +31,31 @@ export async function buscarLocacaoPorId(
   return request<ILocacao>(`locacoes/${id}`);
 }
 
-export async function listarVeiculosDisponiveis(): Promise<IVeiculo[]> {
-  const [
-    veiculos,
-    locacoes,
-    manutencoes,
-  ] = await Promise.all([
-    listarVeiculos(),
-    listarLocacoes(),
-    listarManutencoes(),
-  ]);
+export async function listarVeiculosDisponiveis(
+  locacaoId?: string
+): Promise<IVeiculo[]> {
+  const [veiculos, locacoes, manutencoes] =
+    await Promise.all([
+      listarVeiculos(),
+      listarLocacoes(),
+      listarManutencoes(),
+    ]);
 
   return veiculos.filter((veiculo) => {
-    const locado = locacoes.some(
+    const estaLocado = locacoes.some(
       (locacao) =>
         locacao.veiculoId === veiculo.id &&
-        locacao.status === "ABERTA"
+        locacao.status === "ABERTA" &&
+        locacao.id !== locacaoId
     );
 
-    const emManutencao = manutencoes.some(
+    const estaEmManutencao = manutencoes.some(
       (manutencao) =>
         manutencao.veiculoId === veiculo.id &&
         manutencao.status === "EM_ANDAMENTO"
     );
 
-    return !locado && !emManutencao;
+    return !estaLocado && !estaEmManutencao;
   });
 }
 
@@ -82,42 +63,59 @@ async function prepararLocacao(
   locacao: ILocacao,
   id?: string
 ): Promise<ILocacao> {
+  if (!locacao.clienteId) {
+    throw new Error("Selecione um cliente.");
+  }
+
+  if (!locacao.veiculoId) {
+    throw new Error("Selecione um veículo.");
+  }
+
   if (
     !locacao.dataRetirada ||
-    !locacao.dataDevolucaoPrevista ||
-    locacao.dataDevolucaoPrevista <=
-      locacao.dataRetirada
+    !locacao.dataDevolucaoPrevista
   ) {
     throw new Error(
-      "A devolução prevista deve ser posterior à retirada."
+      "Informe as datas de retirada e devolução."
     );
   }
 
-  const [
-    cliente,
-    veiculo,
-    locacoes,
-    manutencoes,
-    modelos,
-    categorias,
-  ] = await Promise.all([
-    buscarClientePorId(locacao.clienteId),
-    buscarVeiculoPorId(locacao.veiculoId),
-    listarLocacoes(),
-    listarManutencoes(),
-    listarModelos(),
-    listarCategorias(),
-  ]);
+  if (
+    !Number.isFinite(Date.parse(locacao.dataRetirada)) ||
+    !Number.isFinite(
+      Date.parse(locacao.dataDevolucaoPrevista)
+    )
+  ) {
+    throw new Error("Informe datas válidas.");
+  }
 
   if (
-    !cliente.validadeCnh ||
+    locacao.dataDevolucaoPrevista <=
+    locacao.dataRetirada
+  ) {
+    throw new Error(
+      "A data de devolução prevista deve ser posterior à data de retirada."
+    );
+  }
+
+  const cliente = await buscarClientePorId(
+    locacao.clienteId
+  );
+
+  if (
     cliente.validadeCnh < dataHoje() ||
     cliente.validadeCnh < locacao.dataRetirada
   ) {
     throw new Error(
-      "O cliente está com a CNH vencida ou estará na data da retirada."
+      "Não é permitido registrar uma locação para um cliente com CNH vencida."
     );
   }
+
+  const veiculo = await buscarVeiculoPorId(
+    locacao.veiculoId
+  );
+
+  const locacoes = await listarLocacoes();
 
   const veiculoLocado = locacoes.some(
     (item) =>
@@ -128,41 +126,31 @@ async function prepararLocacao(
 
   if (veiculoLocado) {
     throw new Error(
-      "O veículo já possui uma locação aberta."
+      "Este veículo já possui uma locação aberta."
     );
   }
 
-  const emManutencao = manutencoes.some(
+  const manutencoes = await listarManutencoes();
+
+  const veiculoEmManutencao = manutencoes.some(
     (item) =>
       item.veiculoId === locacao.veiculoId &&
       item.status === "EM_ANDAMENTO"
   );
 
-  if (emManutencao) {
+  if (veiculoEmManutencao) {
     throw new Error(
-      "O veículo está em manutenção."
+      "Este veículo está em manutenção."
     );
   }
 
-  const modelo = modelos.find(
-    (item) => item.id === veiculo.modeloId
+  const modelo = await buscarModeloPorId(
+    veiculo.modeloId
   );
 
-  if (!modelo) {
-    throw new Error(
-      "Modelo do veículo não encontrado."
-    );
-  }
-
-  const categoria = categorias.find(
-    (item) => item.id === modelo.categoriaId
+  const categoria = await buscarCategoriaPorId(
+    modelo.categoriaId
   );
-
-  if (!categoria) {
-    throw new Error(
-      "Categoria do veículo não encontrada."
-    );
-  }
 
   if (
     !Number.isFinite(categoria.valorLocacao) ||
@@ -179,16 +167,10 @@ async function prepararLocacao(
     categoria.valorLocacao
   );
 
-  if (valorTotal <= 0) {
-    throw new Error(
-      "O valor calculado da locação é inválido."
-    );
-  }
-
   return {
     ...locacao,
     kmRetirada: veiculo.kmRodado,
-    valorTotal,
+    valorTotal: Number(valorTotal.toFixed(2)),
     status: "ABERTA",
   };
 }
@@ -217,33 +199,33 @@ export async function criarLocacao(
       numero: `CTR-${novaLocacao.id}`,
       dataEmissao: dataHoje(),
       termos:
-        "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
+        "O cliente compromete-se a devolver o veículo " +
+        "nas condições e no prazo estabelecidos na locação. " +
+        "O valor final será calculado de acordo com o " +
+        "período efetivamente utilizado. As condições " +
+        "do veículo serão registradas nas vistorias " +
+        "de retirada e devolução.",
       locacaoId: novaLocacao.id,
     });
   } catch {
-    try {
-      const contratos = await listarContratos();
+    const contratos = await request<
+      { id: string; locacaoId: string }[]
+    >("contratos");
 
-      const contratoCriado = contratos.some(
-        (item) =>
-          item.locacaoId === novaLocacao.id
-      );
+    const contratoExistente = contratos.some(
+      (item) =>
+        item.locacaoId === novaLocacao.id
+    );
 
-      if (!contratoCriado) {
-        await remover(
-          `locacoes/${novaLocacao.id}`
-        );
-      } else {
-        return novaLocacao;
-      }
-    } catch {
-      throw new Error(
-        "Falha ao gerar o contrato. Confira os registros antes de tentar novamente."
-      );
+    if (contratoExistente) {
+      return novaLocacao;
     }
 
+    await remover(`locacoes/${novaLocacao.id}`);
+
     throw new Error(
-      "Não foi possível gerar o contrato. A locação foi desfeita."
+      "Não foi possível gerar o contrato. " +
+      "O cadastro da locação foi desfeito."
     );
   }
 
@@ -262,12 +244,28 @@ export async function atualizarLocacao(
     );
   }
 
+  const vistorias = await request<
+    { locacaoId: string }[]
+  >("vistorias");
+
+  const possuiVistoria = vistorias.some(
+    (item) => item.locacaoId === id
+  );
+
+  if (possuiVistoria) {
+    throw new Error(
+      "Não é possível editar uma locação " +
+      "que já possui vistoria registrada."
+    );
+  }
+
   if (
     atual.clienteId !== locacao.clienteId ||
     atual.veiculoId !== locacao.veiculoId
   ) {
     throw new Error(
-      "Não é permitido trocar o cliente ou veículo de uma locação registrada."
+      "Não é permitido trocar o cliente ou " +
+      "veículo de uma locação registrada."
     );
   }
 
@@ -276,14 +274,17 @@ export async function atualizarLocacao(
     id
   );
 
-  return request<ILocacao>(`locacoes/${id}`, {
-    method: "PUT",
-    body: JSON.stringify({
-      ...dados,
-      id,
-      kmRetirada: atual.kmRetirada,
-    }),
-  });
+  return request<ILocacao>(
+    `locacoes/${id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify({
+        ...dados,
+        id,
+        kmRetirada: atual.kmRetirada,
+      }),
+    }
+  );
 }
 
 export async function cancelarLocacao(
@@ -297,7 +298,7 @@ export async function cancelarLocacao(
     );
   }
 
-  const [vistorias, pagamentos, notas] =
+  const [vistorias, pagamentos, notasFiscais] =
     await Promise.all([
       request<{ locacaoId: string }[]>(
         "vistorias"
@@ -311,33 +312,69 @@ export async function cancelarLocacao(
     ]);
 
   if (
-    [...vistorias, ...pagamentos, ...notas].some(
+    vistorias.some(
       (item) => item.locacaoId === id
     )
   ) {
     throw new Error(
-      "A locação possui movimentações e não pode ser cancelada por esta operação."
+      "Não é possível cancelar uma locação " +
+      "que possui vistoria registrada."
     );
   }
 
-  return request<ILocacao>(`locacoes/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({
-      status: "CANCELADA",
-    }),
-  });
+  if (
+    pagamentos.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
+    throw new Error(
+      "Não é possível cancelar uma locação " +
+      "que possui pagamentos registrados."
+    );
+  }
+
+  if (
+    notasFiscais.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
+    throw new Error(
+      "Não é possível cancelar uma locação " +
+      "que possui nota fiscal."
+    );
+  }
+
+  return request<ILocacao>(
+    `locacoes/${id}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        status: "CANCELADA",
+      }),
+    }
+  );
 }
 
 export async function excluirLocacao(
   id: string
 ): Promise<void> {
+  const locacao = await buscarLocacaoPorId(id);
+
+  if (locacao.status !== "CANCELADA") {
+    throw new Error(
+      "Somente locações canceladas podem ser excluídas."
+    );
+  }
+
   const [
     contratos,
     vistorias,
     pagamentos,
-    notas,
+    notasFiscais,
   ] = await Promise.all([
-    listarContratos(),
+    request<{ locacaoId: string }[]>(
+      "contratos"
+    ),
     request<{ locacaoId: string }[]>(
       "vistorias"
     ),
@@ -349,18 +386,47 @@ export async function excluirLocacao(
     ),
   ]);
 
-  const possuiDependentes = [
-    ...contratos,
-    ...vistorias,
-    ...pagamentos,
-    ...notas,
-  ].some(
-    (item) => item.locacaoId === id
-  );
-
-  if (possuiDependentes) {
+  if (
+    contratos.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
     throw new Error(
-      "Não é possível excluir uma locação que possui registros vinculados."
+      "Não é possível excluir uma locação " +
+      "que possui contrato vinculado."
+    );
+  }
+
+  if (
+    vistorias.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
+    throw new Error(
+      "Não é possível excluir uma locação " +
+      "que possui vistorias registradas."
+    );
+  }
+
+  if (
+    pagamentos.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
+    throw new Error(
+      "Não é possível excluir uma locação " +
+      "que possui pagamentos registrados."
+    );
+  }
+
+  if (
+    notasFiscais.some(
+      (item) => item.locacaoId === id
+    )
+  ) {
+    throw new Error(
+      "Não é possível excluir uma locação " +
+      "que possui nota fiscal."
     );
   }
 

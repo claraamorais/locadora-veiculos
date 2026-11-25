@@ -133,8 +133,10 @@
       "dataDevolucaoPrevista": "2026-11-28",
       "kmRetirada": 15000,
       "valorTotal": 360,
-      "status": "ABERTA",
-      "id": "YXHg7-8e3lg"
+      "status": "FINALIZADA",
+      "id": "YXHg7-8e3lg",
+      "dataDevolucaoReal": "2026-11-28",
+      "kmDevolucao": 15800
     },
     {
       "clienteId": "2",
@@ -170,7 +172,26 @@
       "id": "O5WUzj0qs_A"
     }
   ],
-  "vistorias": [],
+  "vistorias": [
+    {
+      "locacaoId": "YXHg7-8e3lg",
+      "tipo": "RETIRADA",
+      "data": "2026-11-25T00:00:00",
+      "km": 15000,
+      "nivelCombustivel": "CHEIO",
+      "observacoes": "Veículo entregue sem avarias",
+      "id": "sOj1DqCi6gE"
+    },
+    {
+      "locacaoId": "YXHg7-8e3lg",
+      "tipo": "DEVOLUCAO",
+      "data": "2026-11-28T00:00:00",
+      "km": 15800,
+      "nivelCombustivel": "1/2",
+      "observacoes": "Veículo devolvido sem avarias",
+      "id": "ACCulDqYLl0"
+    }
+  ],
   "pagamentos": [],
   "notasFiscais": [],
   "$schema": "./node_modules/json-server/schema.json"

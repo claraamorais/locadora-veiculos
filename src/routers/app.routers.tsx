@@ -10,6 +10,7 @@ import ManutencaoPages from "../pages/ManutencaoPages";
 import ClientePages from "../pages/ClientePages";
 import LocacaoPages from "../pages/LocacaoPages";
 import ContratoPages from "../pages/ContratoPages";
+import VistoriaPages from "../pages/VistoriaPages";
 
 import Alert from "../components/Alert";
 
@@ -76,9 +77,7 @@ export default function AppRouters() {
 
       <Route
         path="/vistorias"
-        element={
-          <EmDesenvolvimento titulo="Vistorias" />
-        }
+        element={<VistoriaPages />}
       />
 
       <Route
