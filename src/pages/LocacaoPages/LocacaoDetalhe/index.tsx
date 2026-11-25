@@ -582,7 +582,7 @@ export default function LocacaoDetalhe({
                   titulo: "Forma de pagamento",
                   render: (item) =>
                     formatarFormaPagamento(
-                      item.formaPagamento
+                      item.forma
                     ),
                 },
                 {

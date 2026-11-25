@@ -109,6 +109,7 @@ export async function atualizarNotaFiscal(
   id: string,
   _notaFiscal: INotaFiscal
 ): Promise<INotaFiscal> {
+  void _notaFiscal;
   await buscarNotaFiscalPorId(id);
 
   throw new Error(

@@ -113,7 +113,7 @@ export default function PagamentoTable({
           titulo: "Forma",
           render: (pagamento) =>
             formatarFormaPagamento(
-              pagamento.formaPagamento
+              pagamento.forma
             ),
         },
         {

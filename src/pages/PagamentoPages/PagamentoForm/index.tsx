@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -44,7 +44,11 @@ interface PagamentoFormProps {
   onCancel: () => void;
 }
 
-export default function PagamentoForm({
+export default function PagamentoForm(props: PagamentoFormProps) {
+  return <PagamentoFormCampos key={props.pagamento?.id ?? "novo"} {...props} />;
+}
+
+function PagamentoFormCampos({
   pagamento,
   pagamentos,
   locacoes,
@@ -54,37 +58,25 @@ export default function PagamentoForm({
   onCancel,
 }: PagamentoFormProps) {
   const [locacaoId, setLocacaoId] =
-    useState("");
+    useState(pagamento?.locacaoId ?? "");
 
   const [data, setData] =
-    useState(dataHoje());
+    useState(pagamento?.data.slice(0, 10) ?? dataHoje());
 
   const [valor, setValor] =
-    useState("");
+    useState(pagamento ? String(pagamento.valor) : "");
 
   const [formaPagamento, setFormaPagamento] =
-    useState<FormaPagamento>("PIX");
+    useState<FormaPagamento>(pagamento?.forma ?? "PIX");
 
   const [status, setStatus] =
-    useState<StatusPagamento>("PENDENTE");
+    useState<StatusPagamento>(pagamento?.status ?? "PENDENTE");
 
   const [erro, setErro] =
     useState("");
 
   const [salvando, setSalvando] =
     useState(false);
-
-  useEffect(() => {
-    if (pagamento) {
-      setLocacaoId(pagamento.locacaoId);
-      setData(pagamento.data.slice(0, 10));
-      setValor(String(pagamento.valor));
-      setFormaPagamento(pagamento.formaPagamento);
-      setStatus(pagamento.status);
-    } else {
-      limparCampos();
-    }
-  }, [pagamento]);
 
   function limparCampos() {
     setLocacaoId("");
@@ -173,7 +165,7 @@ export default function PagamentoForm({
         locacaoId,
         data,
         valor: Number(valor),
-        formaPagamento,
+        forma: formaPagamento,
         status,
       });
 

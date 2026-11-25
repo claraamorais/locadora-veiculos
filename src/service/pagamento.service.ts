@@ -77,7 +77,7 @@ async function validarPagamento(
       "CARTAO_CREDITO",
       "CARTAO_DEBITO",
       "TRANSFERENCIA",
-    ].includes(pagamento.formaPagamento)
+    ].includes(pagamento.forma)
   ) {
     throw new Error(
       "Forma de pagamento inválida."

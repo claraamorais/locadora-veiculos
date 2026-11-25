@@ -36,7 +36,11 @@ export default function MarcaPages() {
   }
 
   useEffect(() => {
-    carregarMarcas();
+    const inicio = window.setTimeout(() => {
+      void carregarMarcas();
+    }, 0);
+
+    return () => window.clearTimeout(inicio);
   }, []);
 
   async function salvarMarca(marca: IMarca) {

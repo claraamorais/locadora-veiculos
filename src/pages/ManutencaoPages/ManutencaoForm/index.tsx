@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -26,41 +26,29 @@ interface ErrosFormulario {
   valor?: string;
 }
 
-export default function ManutencaoForm({
+export default function ManutencaoForm(props: ManutencaoFormProps) {
+  return <ManutencaoFormCampos key={props.manutencao?.id ?? "novo"} {...props} />;
+}
+
+function ManutencaoFormCampos({
   manutencao,
   veiculos,
   modelos,
   onSave,
   onCancel,
 }: ManutencaoFormProps) {
-  const [veiculoId, setVeiculoId] = useState("");
-  const [data, setData] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [valor, setValor] = useState("");
+  const [veiculoId, setVeiculoId] = useState(manutencao?.veiculoId ?? "");
+  const [data, setData] = useState(manutencao?.data ?? "");
+  const [descricao, setDescricao] = useState(manutencao?.descricao ?? "");
+  const [valor, setValor] = useState(manutencao ? String(manutencao.valor) : "");
 
   const [status, setStatus] =
-    useState<IManutencao["status"]>("EM_ANDAMENTO");
+    useState<IManutencao["status"]>(manutencao?.status ?? "EM_ANDAMENTO");
 
   const [erros, setErros] =
     useState<ErrosFormulario>({});
 
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setVeiculoId(manutencao?.veiculoId ?? "");
-    setData(manutencao?.data ?? "");
-    setDescricao(manutencao?.descricao ?? "");
-
-    setValor(
-      manutencao ? String(manutencao.valor) : ""
-    );
-
-    setStatus(
-      manutencao?.status ?? "EM_ANDAMENTO"
-    );
-
-    setErros({});
-  }, [manutencao]);
 
   function limparCampos() {
     setVeiculoId("");

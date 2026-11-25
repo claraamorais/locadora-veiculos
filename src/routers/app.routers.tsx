@@ -14,6 +14,8 @@ import VistoriaPages from "../pages/VistoriaPages";
 import PagamentoPages from "../pages/PagamentoPages";
 import NotaFiscalPages from "../pages/NotaFiscalPages";
 
+import LocacaoDetalhePage from "../pages/LocacaoPages/LocacaoDetalhe/LocacaoDetalhePage";
+
 import Alert from "../components/Alert";
 
 export default function AppRouters() {
@@ -57,6 +59,11 @@ export default function AppRouters() {
       <Route
         path="/locacoes"
         element={<LocacaoPages />}
+      />
+
+      <Route
+        path="/locacoes/:id"
+        element={<LocacaoDetalhePage />}
       />
 
       <Route

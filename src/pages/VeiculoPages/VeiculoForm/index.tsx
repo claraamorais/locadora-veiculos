@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -25,39 +25,25 @@ interface ErrosFormulario {
   modeloId?: string;
 }
 
-export default function VeiculoForm({
+export default function VeiculoForm(props: VeiculoFormProps) {
+  return <VeiculoFormCampos key={props.veiculo?.id ?? "novo"} {...props} />;
+}
+
+function VeiculoFormCampos({
   veiculo,
   modelos,
   onSave,
   onCancel,
 }: VeiculoFormProps) {
-  const [chassi, setChassi] = useState("");
-  const [placa, setPlaca] = useState("");
-  const [anoFabricacao, setAnoFabricacao] = useState("");
-  const [cor, setCor] = useState("");
-  const [kmRodado, setKmRodado] = useState("");
-  const [modeloId, setModeloId] = useState("");
+  const [chassi, setChassi] = useState(veiculo?.chassi ?? "");
+  const [placa, setPlaca] = useState(veiculo?.placa ?? "");
+  const [anoFabricacao, setAnoFabricacao] = useState(veiculo ? String(veiculo.anoFabricacao) : "");
+  const [cor, setCor] = useState(veiculo?.cor ?? "");
+  const [kmRodado, setKmRodado] = useState(veiculo ? String(veiculo.kmRodado) : "");
+  const [modeloId, setModeloId] = useState(veiculo?.modeloId ?? "");
 
   const [erros, setErros] = useState<ErrosFormulario>({});
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setChassi(veiculo?.chassi ?? "");
-    setPlaca(veiculo?.placa ?? "");
-
-    setAnoFabricacao(
-      veiculo ? String(veiculo.anoFabricacao) : ""
-    );
-
-    setCor(veiculo?.cor ?? "");
-
-    setKmRodado(
-      veiculo ? String(veiculo.kmRodado) : ""
-    );
-
-    setModeloId(veiculo?.modeloId ?? "");
-    setErros({});
-  }, [veiculo]);
 
   function limparCampos() {
     setChassi("");

@@ -11,6 +11,10 @@
     {
       "id": "3",
       "nome": "Toyota"
+    },
+    {
+      "nome": "Honda",
+      "id": "q88UTjPhQp8"
     }
   ],
   "categorias": [
@@ -28,6 +32,11 @@
       "id": "3",
       "nome": "SUV",
       "valorLocacao": 250
+    },
+    {
+      "nome": "Caminhonete",
+      "valorLocacao": 300,
+      "id": "rufo1BT3dHk"
     }
   ],
   "modelos": [
@@ -51,6 +60,13 @@
       "ano": 2025,
       "marcaId": "3",
       "categoriaId": "3"
+    },
+    {
+      "nome": "Oi",
+      "ano": 2025,
+      "marcaId": "1",
+      "categoriaId": "rufo1BT3dHk",
+      "id": "QmwhRNcsCaY"
     }
   ],
   "veiculos": [
@@ -80,9 +96,27 @@
       "cor": "Preto",
       "kmRodado": 5000,
       "modeloId": "3"
+    },
+    {
+      "id": "D7Qv9jwIey8",
+      "chassi": "12345678910112314",
+      "placa": "ABC1D28",
+      "anoFabricacao": 2025,
+      "cor": "Preto",
+      "kmRodado": 15000,
+      "modeloId": "QmwhRNcsCaY"
     }
   ],
-  "manutencoes": [],
+  "manutencoes": [
+    {
+      "id": "BqYlu_wiyrE",
+      "veiculoId": "2",
+      "data": "2026-11-26",
+      "descricao": "Troca de óleo e de pastilha de freio",
+      "valor": 2000,
+      "status": "EM_ANDAMENTO"
+    }
+  ],
   "clientes": [
     {
       "id": "1",
@@ -113,6 +147,16 @@
       "telefone": "62999990003",
       "email": "carla@example.com",
       "endereco": "Goiânia - GO"
+    },
+    {
+      "nome": "Clara",
+      "cpf": "05552038169",
+      "cnh": "12345678910",
+      "validadeCnh": "2030-06-10",
+      "telefone": "62999999999",
+      "email": "clara@email.com",
+      "endereco": "Goiania",
+      "id": "B9yVzxzs-8E"
     }
   ],
   "locacoes": [
@@ -147,6 +191,16 @@
       "valorTotal": 1000,
       "status": "ABERTA",
       "id": "rWFYa2jVd9Q"
+    },
+    {
+      "clienteId": "B9yVzxzs-8E",
+      "veiculoId": "D7Qv9jwIey8",
+      "dataRetirada": "2026-11-25",
+      "dataDevolucaoPrevista": "2026-12-20",
+      "kmRetirada": 15000,
+      "valorTotal": 7500,
+      "status": "ABERTA",
+      "id": "SYZ6bsd8LKg"
     }
   ],
   "contratos": [
@@ -170,6 +224,13 @@
       "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
       "locacaoId": "rWFYa2jVd9Q",
       "id": "O5WUzj0qs_A"
+    },
+    {
+      "numero": "CTR-SYZ6bsd8LKg",
+      "dataEmissao": "2026-11-25",
+      "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação. O valor final será calculado de acordo com o período efetivamente utilizado. As condições do veículo serão registradas nas vistorias de retirada e devolução.",
+      "locacaoId": "SYZ6bsd8LKg",
+      "id": "xRf7il3jJXU"
     }
   ],
   "vistorias": [
@@ -197,33 +258,33 @@
       "locacaoId": "YXHg7-8e3lg",
       "data": "2026-11-25",
       "valor": 360,
-      "formaPagamento": "PIX",
       "status": "CONFIRMADO",
-      "id": "JzKohwEx4vA"
+      "id": "JzKohwEx4vA",
+      "forma": "PIX"
     },
     {
       "locacaoId": "rWFYa2jVd9Q",
       "data": "2026-11-25",
       "valor": 200,
-      "formaPagamento": "PIX",
       "status": "CONFIRMADO",
-      "id": "SlCxVRLOop8"
+      "id": "SlCxVRLOop8",
+      "forma": "PIX"
     },
     {
       "locacaoId": "rWFYa2jVd9Q",
       "data": "2026-11-25",
       "valor": 250,
-      "formaPagamento": "CARTAO_CREDITO",
       "status": "CONFIRMADO",
-      "id": "_bJBcXZo-2o"
+      "id": "_bJBcXZo-2o",
+      "forma": "CARTAO_CREDITO"
     },
     {
       "locacaoId": "rWFYa2jVd9Q",
       "data": "2026-11-25",
       "valor": 150,
-      "formaPagamento": "DINHEIRO",
-      "status": "PENDENTE",
-      "id": "vK7ljtYbpmQ"
+      "status": "CONFIRMADO",
+      "id": "vK7ljtYbpmQ",
+      "forma": "DINHEIRO"
     }
   ],
   "notasFiscais": [

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../../../components/Button";
 import Input from "../../../components/Input";
 import type { IMarca } from "../../../models/marca.model";
@@ -9,19 +9,18 @@ interface MarcaFormProps {
   onCancel: () => void;
 }
 
-export default function MarcaForm({
+export default function MarcaForm(props: MarcaFormProps) {
+  return <MarcaFormCampos key={props.marca?.id ?? "novo"} {...props} />;
+}
+
+function MarcaFormCampos({
   marca,
   onSave,
   onCancel,
 }: MarcaFormProps) {
-  const [nome, setNome] = useState("");
+  const [nome, setNome] = useState(marca?.nome ?? "");
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setNome(marca?.nome ?? "");
-    setErro("");
-  }, [marca]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

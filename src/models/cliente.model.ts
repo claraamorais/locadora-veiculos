@@ -9,3 +9,13 @@ export interface ICliente {
   email: string;
   endereco: string;
 }
+
+export const clienteInicial: ICliente = {
+  nome: "",
+  cpf: "",
+  cnh: "",
+  validadeCnh: "",
+  telefone: "",
+  email: "",
+  endereco: "",
+};

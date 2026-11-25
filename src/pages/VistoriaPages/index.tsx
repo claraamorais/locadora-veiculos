@@ -113,7 +113,11 @@ export default function VistoriaPages() {
   }
 
   useEffect(() => {
-    carregarDados();
+    const inicio = window.setTimeout(() => {
+      void carregarDados();
+    }, 0);
+
+    return () => window.clearTimeout(inicio);
   }, []);
 
   async function salvarVistoria(

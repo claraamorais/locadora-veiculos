@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -18,17 +18,21 @@ interface ModeloFormProps {
   onCancel: () => void;
 }
 
-export default function ModeloForm({
+export default function ModeloForm(props: ModeloFormProps) {
+  return <ModeloFormCampos key={props.modelo?.id ?? "novo"} {...props} />;
+}
+
+function ModeloFormCampos({
   modelo,
   marcas,
   categorias,
   onSave,
   onCancel,
 }: ModeloFormProps) {
-  const [nome, setNome] = useState("");
-  const [ano, setAno] = useState("");
-  const [marcaId, setMarcaId] = useState("");
-  const [categoriaId, setCategoriaId] = useState("");
+  const [nome, setNome] = useState(modelo?.nome ?? "");
+  const [ano, setAno] = useState(modelo ? String(modelo.ano) : "");
+  const [marcaId, setMarcaId] = useState(modelo?.marcaId ?? "");
+  const [categoriaId, setCategoriaId] = useState(modelo?.categoriaId ?? "");
 
   const [erroNome, setErroNome] = useState("");
   const [erroAno, setErroAno] = useState("");
@@ -36,15 +40,6 @@ export default function ModeloForm({
   const [erroCategoria, setErroCategoria] = useState("");
 
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setNome(modelo?.nome ?? "");
-    setAno(modelo ? String(modelo.ano) : "");
-    setMarcaId(modelo?.marcaId ?? "");
-    setCategoriaId(modelo?.categoriaId ?? "");
-
-    limparErros();
-  }, [modelo]);
 
   function limparErros() {
     setErroNome("");

@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -13,28 +13,21 @@ interface CategoriaFormProps {
   onCancel: () => void;
 }
 
-export default function CategoriaForm({
+export default function CategoriaForm(props: CategoriaFormProps) {
+  return <CategoriaFormCampos key={props.categoria?.id ?? "novo"} {...props} />;
+}
+
+function CategoriaFormCampos({
   categoria,
   onSave,
   onCancel,
 }: CategoriaFormProps) {
-  const [nome, setNome] = useState("");
-  const [valorLocacao, setValorLocacao] = useState("");
+  const [nome, setNome] = useState(categoria?.nome ?? "");
+  const [valorLocacao, setValorLocacao] = useState(categoria ? String(categoria.valorLocacao) : "");
 
   const [erroNome, setErroNome] = useState("");
   const [erroValor, setErroValor] = useState("");
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setNome(categoria?.nome ?? "");
-
-    setValorLocacao(
-      categoria ? String(categoria.valorLocacao) : ""
-    );
-
-    setErroNome("");
-    setErroValor("");
-  }, [categoria]);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>

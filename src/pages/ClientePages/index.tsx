@@ -43,7 +43,11 @@ export default function ClientePages() {
   }
 
   useEffect(() => {
-    carregarClientes();
+    const inicio = window.setTimeout(() => {
+      void carregarClientes();
+    }, 0);
+
+    return () => window.clearTimeout(inicio);
   }, []);
 
   async function salvarCliente(cliente: ICliente) {

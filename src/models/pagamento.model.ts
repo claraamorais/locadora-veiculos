@@ -15,7 +15,7 @@ export interface IPagamento {
   id?: string;
   data: string;
   valor: number;
-  formaPagamento: FormaPagamento;
+  forma: FormaPagamento;
   status: StatusPagamento;
   locacaoId: string;
 }
@@ -23,7 +23,7 @@ export interface IPagamento {
 export const pagamentoInicial: IPagamento = {
   data: "",
   valor: 0,
-  formaPagamento: "PIX",
+  forma: "PIX",
   status: "PENDENTE",
   locacaoId: "",
 };

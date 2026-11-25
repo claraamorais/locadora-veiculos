@@ -40,7 +40,11 @@ export default function CategoriaPages() {
   }
 
   useEffect(() => {
-    carregarCategorias();
+    const inicio = window.setTimeout(() => {
+      void carregarCategorias();
+    }, 0);
+
+    return () => window.clearTimeout(inicio);
   }, []);
 
   async function salvarCategoria(categoria: ICategoria) {

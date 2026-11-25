@@ -83,7 +83,11 @@ export default function ContratoPages() {
   }
 
   useEffect(() => {
-    carregarDados();
+    const inicio = window.setTimeout(() => {
+      void carregarDados();
+    }, 0);
+
+    return () => window.clearTimeout(inicio);
   }, []);
 
   const contratosFiltrados = contratos.filter(

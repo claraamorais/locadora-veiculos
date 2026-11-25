@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -43,7 +43,11 @@ interface LocacaoFormProps {
   onCancel: () => void;
 }
 
-export default function LocacaoForm({
+export default function LocacaoForm(props: LocacaoFormProps) {
+  return <LocacaoFormCampos key={props.locacao?.id ?? "novo"} {...props} />;
+}
+
+function LocacaoFormCampos({
   locacao,
   clientes,
   veiculos,
@@ -52,34 +56,19 @@ export default function LocacaoForm({
   onSave,
   onCancel,
 }: LocacaoFormProps) {
-  const [clienteId, setClienteId] = useState("");
-  const [veiculoId, setVeiculoId] = useState("");
+  const [clienteId, setClienteId] = useState(locacao?.clienteId ?? "");
+  const [veiculoId, setVeiculoId] = useState(locacao?.veiculoId ?? "");
 
   const [dataRetirada, setDataRetirada] =
-    useState(dataHoje());
+    useState(locacao?.dataRetirada ?? dataHoje());
 
   const [
     dataDevolucaoPrevista,
     setDataDevolucaoPrevista,
-  ] = useState("");
+  ] = useState(locacao?.dataDevolucaoPrevista ?? "");
 
   const [erro, setErro] = useState("");
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setClienteId(locacao?.clienteId ?? "");
-    setVeiculoId(locacao?.veiculoId ?? "");
-
-    setDataRetirada(
-      locacao?.dataRetirada ?? dataHoje()
-    );
-
-    setDataDevolucaoPrevista(
-      locacao?.dataDevolucaoPrevista ?? ""
-    );
-
-    setErro("");
-  }, [locacao]);
 
   const cliente = clientes.find(
     (item) => item.id === clienteId

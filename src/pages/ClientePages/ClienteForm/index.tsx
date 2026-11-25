@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 import Button from "../../../components/Button";
@@ -24,34 +24,27 @@ interface ErrosFormulario {
   endereco?: string;
 }
 
-export default function ClienteForm({
+export default function ClienteForm(props: ClienteFormProps) {
+  return <ClienteFormCampos key={props.cliente?.id ?? "novo"} {...props} />;
+}
+
+function ClienteFormCampos({
   cliente,
   onSave,
   onCancel,
 }: ClienteFormProps) {
-  const [nome, setNome] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [cnh, setCnh] = useState("");
-  const [validadeCnh, setValidadeCnh] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [email, setEmail] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const [nome, setNome] = useState(cliente?.nome ?? "");
+  const [cpf, setCpf] = useState(cliente?.cpf ?? "");
+  const [cnh, setCnh] = useState(cliente?.cnh ?? "");
+  const [validadeCnh, setValidadeCnh] = useState(cliente?.validadeCnh ?? "");
+  const [telefone, setTelefone] = useState(cliente?.telefone ?? "");
+  const [email, setEmail] = useState(cliente?.email ?? "");
+  const [endereco, setEndereco] = useState(cliente?.endereco ?? "");
 
   const [erros, setErros] =
     useState<ErrosFormulario>({});
 
   const [salvando, setSalvando] = useState(false);
-
-  useEffect(() => {
-    setNome(cliente?.nome ?? "");
-    setCpf(cliente?.cpf ?? "");
-    setCnh(cliente?.cnh ?? "");
-    setValidadeCnh(cliente?.validadeCnh ?? "");
-    setTelefone(cliente?.telefone ?? "");
-    setEmail(cliente?.email ?? "");
-    setEndereco(cliente?.endereco ?? "");
-    setErros({});
-  }, [cliente]);
 
   function limparCampos() {
     setNome("");
