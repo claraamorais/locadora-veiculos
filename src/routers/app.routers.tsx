@@ -3,6 +3,10 @@ import { Routes, Route } from "react-router-dom";
 
 import HomePages from "../pages/HomePages";
 import MarcaPages from "../pages/MarcaPages";
+import CategoriaPages from "../pages/CategoriaPages";
+import ModeloPages from "../pages/ModeloPages";
+import VeiculoPages from "../pages/VeiculoPages";
+
 import Alert from "../components/Alert";
 
 function EmDesenvolvimento({ titulo }: { titulo: string }) {
@@ -24,20 +28,11 @@ export default function AppRouters() {
 
       <Route path="/marcas" element={<MarcaPages />} />
 
-      <Route
-        path="/categorias"
-        element={<EmDesenvolvimento titulo="Categorias" />}
-      />
+      <Route path="/categorias" element={<CategoriaPages />} />
 
-      <Route
-        path="/modelos"
-        element={<EmDesenvolvimento titulo="Modelos" />}
-      />
+      <Route path="/modelos" element={<ModeloPages />} />
 
-      <Route
-        path="/veiculos"
-        element={<EmDesenvolvimento titulo="Veículos" />}
-      />
+      <Route path="/veiculos" element={<VeiculoPages />} />
 
       <Route
         path="/manutencoes"
