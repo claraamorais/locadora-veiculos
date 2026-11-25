@@ -1,0 +1,124 @@
+{
+  "marcas": [
+    {
+      "id": "1",
+      "nome": "Volkswagen"
+    },
+    {
+      "id": "2",
+      "nome": "Fiat"
+    },
+    {
+      "id": "3",
+      "nome": "Toyota"
+    }
+  ],
+  "categorias": [
+    {
+      "id": "1",
+      "nome": "Econômico",
+      "valorLocacao": 120
+    },
+    {
+      "id": "2",
+      "nome": "Intermediário",
+      "valorLocacao": 180
+    },
+    {
+      "id": "3",
+      "nome": "SUV",
+      "valorLocacao": 250
+    }
+  ],
+  "modelos": [
+    {
+      "id": "1",
+      "nome": "Gol",
+      "ano": 2024,
+      "marcaId": "1",
+      "categoriaId": "1"
+    },
+    {
+      "id": "2",
+      "nome": "Argo",
+      "ano": 2024,
+      "marcaId": "2",
+      "categoriaId": "2"
+    },
+    {
+      "id": "3",
+      "nome": "Corolla Cross",
+      "ano": 2025,
+      "marcaId": "3",
+      "categoriaId": "3"
+    }
+  ],
+  "veiculos": [
+    {
+      "id": "1",
+      "chassi": "9BWZZZ377VT004251",
+      "placa": "ABC1D23",
+      "anoFabricacao": 2024,
+      "cor": "Prata",
+      "kmRodado": 15000,
+      "modeloId": "1"
+    },
+    {
+      "id": "2",
+      "chassi": "9BD11111111111111",
+      "placa": "DEF2G45",
+      "anoFabricacao": 2024,
+      "cor": "Branco",
+      "kmRodado": 10000,
+      "modeloId": "2"
+    },
+    {
+      "id": "3",
+      "chassi": "9BR22222222222222",
+      "placa": "GHI3J67",
+      "anoFabricacao": 2025,
+      "cor": "Preto",
+      "kmRodado": 5000,
+      "modeloId": "3"
+    }
+  ],
+  "manutencoes": [],
+  "clientes": [
+    {
+      "id": "1",
+      "nome": "Ana Silva",
+      "cpf": "12345678909",
+      "cnh": "12345678901",
+      "validadeCnh": "2028-12-31",
+      "telefone": "62999990001",
+      "email": "ana@example.com",
+      "endereco": "Goiânia - GO"
+    },
+    {
+      "id": "2",
+      "nome": "Bruno Costa",
+      "cpf": "98765432100",
+      "cnh": "12345678902",
+      "validadeCnh": "2029-06-30",
+      "telefone": "62999990002",
+      "email": "bruno@example.com",
+      "endereco": "Goiânia - GO"
+    },
+    {
+      "id": "3",
+      "nome": "Carla Souza",
+      "cpf": "11144477735",
+      "cnh": "12345678903",
+      "validadeCnh": "2028-10-15",
+      "telefone": "62999990003",
+      "email": "carla@example.com",
+      "endereco": "Goiânia - GO"
+    }
+  ],
+  "locacoes": [],
+  "contratos": [],
+  "vistorias": [],
+  "pagamentos": [],
+  "notasFiscais": [],
+  "$schema": "./node_modules/json-server/schema.json"
+}
