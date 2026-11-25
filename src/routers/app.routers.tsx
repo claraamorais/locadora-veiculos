@@ -9,6 +9,7 @@ import VeiculoPages from "../pages/VeiculoPages";
 import ManutencaoPages from "../pages/ManutencaoPages";
 import ClientePages from "../pages/ClientePages";
 import LocacaoPages from "../pages/LocacaoPages";
+import ContratoPages from "../pages/ContratoPages";
 
 import Alert from "../components/Alert";
 
@@ -70,9 +71,7 @@ export default function AppRouters() {
 
       <Route
         path="/contratos"
-        element={
-          <EmDesenvolvimento titulo="Contratos" />
-        }
+        element={<ContratoPages />}
       />
 
       <Route

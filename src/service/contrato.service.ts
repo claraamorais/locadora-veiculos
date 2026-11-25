@@ -1,6 +1,6 @@
 
 import type { IContrato } from "../models/contrato.model";
-import { request, remover } from "./api.service";
+import { request } from "./api.service";
 
 export async function listarContratos(): Promise<IContrato[]> {
   return request<IContrato[]>("contratos");
@@ -12,11 +12,33 @@ export async function buscarContratoPorId(
   return request<IContrato>(`contratos/${id}`);
 }
 
+export async function buscarContratoPorLocacao(
+  locacaoId: string
+): Promise<IContrato | undefined> {
+  const contratos = await listarContratos();
+
+  return contratos.find(
+    (contrato) => contrato.locacaoId === locacaoId
+  );
+}
+
 async function validarContrato(
   contrato: IContrato,
   id?: string
 ): Promise<void> {
   const contratos = await listarContratos();
+
+  const locacoes = await request<
+    { id: string }[]
+  >("locacoes");
+
+  if (
+    !locacoes.some(
+      (locacao) => locacao.id === contrato.locacaoId
+    )
+  ) {
+    throw new Error("Locação não encontrada.");
+  }
 
   if (
     contratos.some(
@@ -58,6 +80,14 @@ export async function atualizarContrato(
   id: string,
   contrato: IContrato
 ): Promise<IContrato> {
+  const atual = await buscarContratoPorId(id);
+
+  if (atual.locacaoId !== contrato.locacaoId) {
+    throw new Error(
+      "Não é permitido alterar a locação do contrato."
+    );
+  }
+
   await validarContrato(contrato, id);
 
   return request<IContrato>(`contratos/${id}`, {
@@ -72,5 +102,9 @@ export async function atualizarContrato(
 export async function excluirContrato(
   id: string
 ): Promise<void> {
-  await remover(`contratos/${id}`);
+  await buscarContratoPorId(id);
+
+  throw new Error(
+    "O contrato não pode ser excluído individualmente."
+  );
 }

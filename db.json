@@ -135,6 +135,16 @@
       "valorTotal": 360,
       "status": "ABERTA",
       "id": "YXHg7-8e3lg"
+    },
+    {
+      "clienteId": "2",
+      "veiculoId": "3",
+      "dataRetirada": "2026-11-25",
+      "dataDevolucaoPrevista": "2026-11-29",
+      "kmRetirada": 5000,
+      "valorTotal": 1000,
+      "status": "ABERTA",
+      "id": "rWFYa2jVd9Q"
     }
   ],
   "contratos": [
@@ -151,6 +161,13 @@
       "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
       "locacaoId": "YXHg7-8e3lg",
       "id": "IWoPkmAJLVI"
+    },
+    {
+      "numero": "CTR-rWFYa2jVd9Q",
+      "dataEmissao": "2026-11-25",
+      "termos": "O cliente compromete-se a devolver o veículo nas condições e no prazo estabelecidos na locação.",
+      "locacaoId": "rWFYa2jVd9Q",
+      "id": "O5WUzj0qs_A"
     }
   ],
   "vistorias": [],
