@@ -1,51 +1,82 @@
 
 import { useEffect, useState } from "react";
 
-import type { IVeiculo } from "../../models/veiculo.model";
-import type { IModelo } from "../../models/modelo.model";
-
 import Card from "../../components/Card";
 import Alert from "../../components/Alert";
+import Select from "../../components/Select";
 import Modal from "../../components/Modal";
 
 import VeiculoForm from "./VeiculoForm";
 import VeiculoTable from "./VeiculoTable";
 
+import type {
+  IVeiculo,
+  IVeiculoComStatus,
+} from "../../models/veiculo.model";
+
+import type {
+  IModelo,
+} from "../../models/modelo.model";
+
 import {
-  listarVeiculos,
+  listarVeiculosComStatus,
   criarVeiculo,
   atualizarVeiculo,
   excluirVeiculo,
 } from "../../service/veiculo.service";
 
-import { listarModelos } from "../../service/modelo.service";
+import {
+  listarModelos,
+} from "../../service/modelo.service";
 
 export default function VeiculoPages() {
-  const [veiculos, setVeiculos] = useState<IVeiculo[]>([]);
-  const [modelos, setModelos] = useState<IModelo[]>([]);
+  const [veiculos, setVeiculos] =
+    useState<IVeiculoComStatus[]>([]);
+
+  const [modelos, setModelos] =
+    useState<IModelo[]>([]);
 
   const [veiculoEditando, setVeiculoEditando] =
     useState<IVeiculo | null>(null);
 
   const [veiculoExcluindo, setVeiculoExcluindo] =
-    useState<string | null>(null);
+    useState<IVeiculo | null>(null);
 
-  const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState("");
-  const [excluindo, setExcluindo] = useState(false);
+  const [filtroStatus, setFiltroStatus] =
+    useState("");
+
+  const [mensagem, setMensagem] =
+    useState("");
+
+  const [erro, setErro] =
+    useState("");
+
+  const [carregando, setCarregando] =
+    useState(true);
+
+  const [excluindo, setExcluindo] =
+    useState(false);
 
   async function carregarDados() {
+    setCarregando(true);
+
     try {
-      const [dadosVeiculos, dadosModelos] =
-        await Promise.all([
-          listarVeiculos(),
-          listarModelos(),
-        ]);
+      const [
+        dadosVeiculos,
+        dadosModelos,
+      ] = await Promise.all([
+        listarVeiculosComStatus(),
+        listarModelos(),
+      ]);
 
       setVeiculos(dadosVeiculos);
       setModelos(dadosModelos);
     } catch {
-      setErro("Erro ao carregar os dados.");
+      setErro(
+        "Erro ao carregar os veículos."
+      );
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -53,85 +84,103 @@ export default function VeiculoPages() {
     carregarDados();
   }, []);
 
-  async function salvarVeiculo(veiculo: IVeiculo) {
+  async function salvarVeiculo(
+    veiculo: IVeiculo
+  ) {
     setErro("");
     setMensagem("");
 
     try {
       if (veiculo.id) {
-        await atualizarVeiculo(veiculo.id, veiculo);
-        setMensagem("Veículo atualizado com sucesso!");
+        await atualizarVeiculo(
+          veiculo.id,
+          veiculo
+        );
+
+        setMensagem(
+          "Veículo atualizado com sucesso!"
+        );
       } else {
         await criarVeiculo(veiculo);
-        setMensagem("Veículo cadastrado com sucesso!");
+
+        setMensagem(
+          "Veículo cadastrado com sucesso!"
+        );
       }
 
       setVeiculoEditando(null);
+      setFiltroStatus("");
+
       await carregarDados();
     } catch (error) {
-      if (error instanceof Error) {
-        setErro(error.message);
-      } else {
-        setErro("Erro ao salvar veículo.");
-      }
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Erro ao salvar veículo."
+      );
 
       throw error;
     }
   }
 
-  function editarVeiculo(veiculo: IVeiculo) {
-    setVeiculoEditando(veiculo);
-    setMensagem("");
-    setErro("");
-  }
-
-  function solicitarExclusao(id: string) {
-    setVeiculoExcluindo(id);
-    setMensagem("");
-    setErro("");
-  }
-
   async function confirmarExclusao() {
-    if (!veiculoExcluindo || excluindo) {
+    if (!veiculoExcluindo?.id || excluindo) {
       return;
     }
 
+    setErro("");
+    setMensagem("");
     setExcluindo(true);
 
     try {
-      await excluirVeiculo(veiculoExcluindo);
+      await excluirVeiculo(
+        veiculoExcluindo.id
+      );
 
-      setMensagem("Veículo excluído com sucesso!");
+      setMensagem(
+        "Veículo excluído com sucesso!"
+      );
+
+      setVeiculoExcluindo(null);
       setVeiculoEditando(null);
 
       await carregarDados();
     } catch (error) {
-      if (error instanceof Error) {
-        setErro(error.message);
-      } else {
-        setErro("Erro ao excluir veículo.");
-      }
-    } finally {
+      setErro(
+        error instanceof Error
+          ? error.message
+          : "Erro ao excluir veículo."
+      );
+
       setVeiculoExcluindo(null);
+    } finally {
       setExcluindo(false);
     }
   }
 
-  function cancelarExclusao() {
-    if (!excluindo) {
-      setVeiculoExcluindo(null);
-    }
-  }
+  const totalDisponiveis = veiculos.filter(
+    (item) => item.status === "DISPONIVEL"
+  ).length;
 
-  function cancelar() {
-    setVeiculoEditando(null);
-    setErro("");
-    setMensagem("");
-  }
+  const totalLocados = veiculos.filter(
+    (item) => item.status === "LOCADO"
+  ).length;
+
+  const totalManutencao = veiculos.filter(
+    (item) => item.status === "EM_MANUTENCAO"
+  ).length;
+
+  const veiculosFiltrados = veiculos.filter(
+    (item) =>
+      !filtroStatus ||
+      item.status === filtroStatus
+  );
 
   return (
     <div className="container-fluid mt-4 mb-5 px-4">
-      <h2 className="mb-4">Cadastro de Veículos</h2>
+      <h2 className="mb-4">
+        Gerenciamento de Veículos
+      </h2>
 
       {mensagem && (
         <Alert variant="success">
@@ -145,58 +194,162 @@ export default function VeiculoPages() {
         </Alert>
       )}
 
+      <div className="row g-3 mb-4">
+        <div className="col-6 col-md-3">
+          <Card titulo="Total de veículos">
+            <h4>{veiculos.length}</h4>
+          </Card>
+        </div>
+
+        <div className="col-6 col-md-3">
+          <Card titulo="Disponíveis">
+            <h4 className="text-success">
+              {totalDisponiveis}
+            </h4>
+          </Card>
+        </div>
+
+        <div className="col-6 col-md-3">
+          <Card titulo="Locados">
+            <h4 className="text-primary">
+              {totalLocados}
+            </h4>
+          </Card>
+        </div>
+
+        <div className="col-6 col-md-3">
+          <Card titulo="Em manutenção">
+            <h4 className="text-warning">
+              {totalManutencao}
+            </h4>
+          </Card>
+        </div>
+      </div>
+
       <div className="row g-4">
         <div className="col-lg-3">
           <Card
             titulo={
               veiculoEditando
                 ? "Editar veículo"
-                : "Novo veículo"
+                : "Cadastrar veículo"
             }
           >
             <VeiculoForm
               veiculo={veiculoEditando}
               modelos={modelos}
               onSave={salvarVeiculo}
-              onCancel={cancelar}
+              onCancel={() => {
+                setVeiculoEditando(null);
+                setErro("");
+                setMensagem("");
+              }}
             />
           </Card>
         </div>
 
         <div className="col-lg-9">
-          <Card
-            titulo={`Veículos cadastrados (${veiculos.length})`}
-          >
-            <VeiculoTable
-              veiculos={veiculos}
-              modelos={modelos}
-              onEdit={editarVeiculo}
-              onDelete={solicitarExclusao}
-            />
+          <Card titulo="Veículos cadastrados">
+            <div className="row">
+              <div className="col-md-6">
+                <Select
+                  id="filtroStatusVeiculo"
+                  label="Filtrar por disponibilidade"
+                  value={filtroStatus}
+                  onChange={(event) =>
+                    setFiltroStatus(
+                      event.target.value
+                    )
+                  }
+                  opcoes={[
+                    {
+                      value: "DISPONIVEL",
+                      label: "Disponível",
+                    },
+                    {
+                      value: "LOCADO",
+                      label: "Locado",
+                    },
+                    {
+                      value: "EM_MANUTENCAO",
+                      label: "Em manutenção",
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+
+            {carregando ? (
+              <p>Carregando veículos...</p>
+            ) : (
+              <>
+                <p className="text-muted">
+                  Exibindo{" "}
+                  {veiculosFiltrados.length}
+                  {" "}de{" "}
+                  {veiculos.length}
+                  {" "}veículos.
+                </p>
+
+                <VeiculoTable
+                  veiculos={veiculosFiltrados}
+                  modelos={modelos}
+                  onEdit={(veiculo) => {
+                    const {
+                      id,
+                      chassi,
+                      placa,
+                      anoFabricacao,
+                      cor,
+                      kmRodado,
+                      modeloId,
+                    } = veiculo;
+
+                    setVeiculoEditando({
+                      id,
+                      chassi,
+                      placa,
+                      anoFabricacao,
+                      cor,
+                      kmRodado,
+                      modeloId,
+                    });
+
+                    setErro("");
+                    setMensagem("");
+                  }}
+                  onDelete={(veiculo) =>
+                    setVeiculoExcluindo(veiculo)
+                  }
+                />
+              </>
+            )}
           </Card>
         </div>
       </div>
 
       <Modal
-        aberto={veiculoExcluindo !== null}
-        titulo="Confirmar exclusão"
-        onClose={cancelarExclusao}
+        aberto={!!veiculoExcluindo}
+        titulo="Excluir veículo"
+        onClose={() => {
+          if (!excluindo) {
+            setVeiculoExcluindo(null);
+          }
+        }}
         onConfirm={confirmarExclusao}
       >
         <p>
-          Deseja realmente excluir o veículo de placa{" "}
+          Deseja realmente excluir o veículo
+          de placa{" "}
           <strong>
-            {veiculos.find(
-              (veiculo) => veiculo.id === veiculoExcluindo
-            )?.placa}
-          </strong>?
+            {veiculoExcluindo?.placa}
+          </strong>
+          ?
         </p>
 
-        <p className="text-muted mb-0">
-          {excluindo
-            ? "Excluindo veículo..."
-            : "Esta ação não poderá ser desfeita."}
-        </p>
+        {excluindo && (
+          <p>Excluindo veículo...</p>
+        )}
       </Modal>
     </div>
   );

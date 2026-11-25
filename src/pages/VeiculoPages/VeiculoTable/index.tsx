@@ -2,14 +2,20 @@
 import Button from "../../../components/Button";
 import Table from "../../../components/Table";
 
-import type { IVeiculo } from "../../../models/veiculo.model";
-import type { IModelo } from "../../../models/modelo.model";
+import type {
+  IVeiculo,
+  IVeiculoComStatus,
+} from "../../../models/veiculo.model";
+
+import type {
+  IModelo,
+} from "../../../models/modelo.model";
 
 interface VeiculoTableProps {
-  veiculos: IVeiculo[];
+  veiculos: IVeiculoComStatus[];
   modelos: IModelo[];
   onEdit: (veiculo: IVeiculo) => void;
-  onDelete: (id: string) => void;
+  onDelete: (veiculo: IVeiculo) => void;
 }
 
 export default function VeiculoTable({
@@ -19,7 +25,7 @@ export default function VeiculoTable({
   onDelete,
 }: VeiculoTableProps) {
   return (
-    <Table<IVeiculo>
+    <Table<IVeiculoComStatus>
       dados={veiculos}
       colunas={[
         {
@@ -32,10 +38,14 @@ export default function VeiculoTable({
         },
         {
           titulo: "Modelo",
-          render: (veiculo) =>
-            modelos.find(
-              (modelo) => modelo.id === veiculo.modeloId
-            )?.nome ?? "Não encontrado",
+          render: (veiculo) => {
+            const modelo = modelos.find(
+              (item) =>
+                item.id === veiculo.modeloId
+            );
+
+            return modelo?.nome ?? "-";
+          },
         },
         {
           titulo: "Chassi",
@@ -43,7 +53,8 @@ export default function VeiculoTable({
         },
         {
           titulo: "Ano",
-          render: (veiculo) => veiculo.anoFabricacao,
+          render: (veiculo) =>
+            veiculo.anoFabricacao,
         },
         {
           titulo: "Cor",
@@ -52,14 +63,47 @@ export default function VeiculoTable({
         {
           titulo: "Quilometragem",
           render: (veiculo) =>
-            `${veiculo.kmRodado.toLocaleString("pt-BR")} km`,
+            `${veiculo.kmRodado.toLocaleString(
+              "pt-BR"
+            )} km`,
+        },
+        {
+          titulo: "Disponibilidade",
+          render: (veiculo) => {
+            let cor = "";
+            let texto = "";
+
+            if (veiculo.status === "DISPONIVEL") {
+              cor = "bg-success";
+              texto = "Disponível";
+            }
+
+            if (veiculo.status === "LOCADO") {
+              cor = "bg-primary";
+              texto = "Locado";
+            }
+
+            if (
+              veiculo.status === "EM_MANUTENCAO"
+            ) {
+              cor = "bg-warning text-dark";
+              texto = "Em manutenção";
+            }
+
+            return (
+              <span className={`badge ${cor}`}>
+                {texto}
+              </span>
+            );
+          },
         },
         {
           titulo: "Ações",
           render: (veiculo) => (
-            <div className="d-flex gap-2">
+            <div className="d-flex flex-wrap gap-1">
               <Button
                 variant="warning"
+                className="btn-sm"
                 onClick={() => onEdit(veiculo)}
               >
                 Editar
@@ -67,11 +111,8 @@ export default function VeiculoTable({
 
               <Button
                 variant="danger"
-                onClick={() => {
-                  if (veiculo.id) {
-                    onDelete(veiculo.id);
-                  }
-                }}
+                className="btn-sm"
+                onClick={() => onDelete(veiculo)}
               >
                 Excluir
               </Button>
