@@ -11,6 +11,7 @@ import ClientePages from "../pages/ClientePages";
 import LocacaoPages from "../pages/LocacaoPages";
 import ContratoPages from "../pages/ContratoPages";
 import VistoriaPages from "../pages/VistoriaPages";
+import PagamentoPages from "../pages/PagamentoPages";
 
 import Alert from "../components/Alert";
 
@@ -33,7 +34,10 @@ function EmDesenvolvimento({
 export default function AppRouters() {
   return (
     <Routes>
-      <Route path="/" element={<HomePages />} />
+      <Route
+        path="/"
+        element={<HomePages />}
+      />
 
       <Route
         path="/marcas"
@@ -82,9 +86,7 @@ export default function AppRouters() {
 
       <Route
         path="/pagamentos"
-        element={
-          <EmDesenvolvimento titulo="Pagamentos" />
-        }
+        element={<PagamentoPages />}
       />
 
       <Route

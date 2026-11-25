@@ -192,7 +192,40 @@
       "id": "ACCulDqYLl0"
     }
   ],
-  "pagamentos": [],
+  "pagamentos": [
+    {
+      "locacaoId": "YXHg7-8e3lg",
+      "data": "2026-11-25",
+      "valor": 360,
+      "formaPagamento": "PIX",
+      "status": "CONFIRMADO",
+      "id": "JzKohwEx4vA"
+    },
+    {
+      "locacaoId": "rWFYa2jVd9Q",
+      "data": "2026-11-25",
+      "valor": 200,
+      "formaPagamento": "PIX",
+      "status": "CONFIRMADO",
+      "id": "SlCxVRLOop8"
+    },
+    {
+      "locacaoId": "rWFYa2jVd9Q",
+      "data": "2026-11-25",
+      "valor": 250,
+      "formaPagamento": "CARTAO_CREDITO",
+      "status": "CONFIRMADO",
+      "id": "_bJBcXZo-2o"
+    },
+    {
+      "locacaoId": "rWFYa2jVd9Q",
+      "data": "2026-11-25",
+      "valor": 150,
+      "formaPagamento": "DINHEIRO",
+      "status": "PENDENTE",
+      "id": "vK7ljtYbpmQ"
+    }
+  ],
   "notasFiscais": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
