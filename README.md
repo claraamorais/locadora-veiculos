@@ -1,75 +1,138 @@
-# React + TypeScript + Vite
+# Sistema de Locação de Veículos
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Projeto desenvolvido para a disciplina de Tecnologia de Construção de Software, com o objetivo de gerenciar uma locadora de veículos, desde o cadastro da frota e dos clientes até a finalização das locações.
 
-Currently, two official plugins are available:
+## Autora
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Clara Morais
 
-## React Compiler
+## Tecnologias utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React
+- TypeScript
+- Vite
+- Bootstrap
+- React Router
+- JSON Server
+- Fetch API
 
-## Expanding the ESLint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Cadastro de marcas, categorias, modelos e veículos.
+- Cadastro de clientes.
+- Registro e histórico de manutenções.
+- Controle de disponibilidade dos veículos.
+- Registro de locações.
+- Cálculo automático do valor das diárias.
+- Geração automática de contratos.
+- Vistorias de retirada e devolução.
+- Registro e controle de pagamentos.
+- Emissão simulada de notas fiscais.
+- Consulta e detalhamento das locações.
+- Filtros de pesquisa.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Regras de negócio
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Não é permitido locar um veículo que já possui uma locação aberta.
+- A data prevista de devolução deve ser posterior à data de retirada.
+- Clientes com CNH vencida não podem realizar locações.
+- A quilometragem de devolução não pode ser inferior à de retirada.
+- Notas fiscais somente podem ser emitidas para locações finalizadas.
+- Registros com dependências não podem ser excluídos.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Estrutura do projeto
 
+```text
+locadora-veiculos/
+├── src/
+│   ├── components/
+│   ├── models/
+│   ├── pages/
+│   ├── routers/
+│   ├── service/
+│   ├── App.tsx
+│   └── main.tsx
+├── db.json
+├── package.json
+└── README.md
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Como executar
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+É necessário ter o Node.js e o npm instalados.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Instalar as dependências
 
+```bash
+npm install
 ```
+
+### Iniciar o JSON Server
+
+```bash
+npm run server
+```
+
+A API estará disponível em `http://localhost:3001`.
+
+### Iniciar o frontend
+
+Em outro terminal, execute:
+
+```bash
+npm run dev
+```
+
+A aplicação estará disponível em `http://localhost:5173`, caso a porta esteja livre.
+
+## Verificação do código
+
+```bash
+npx tsc --noEmit -p tsconfig.app.json
+npm run lint
+npm run build
+```
+
+## Capturas de tela
+
+### Página inicial
+
+![Página inicial](docs/prints/home.png)
+
+### Veículos
+
+![Veículos](docs/prints/veiculos.png)
+
+### Clientes
+
+![Clientes](docs/prints/clientes.png)
+
+### Locações
+
+![Locações](docs/prints/locacoes.png)
+
+### Detalhes da locação
+
+![Detalhes da locação](docs/prints/detalhes-locacao.png)
+
+### Contratos
+
+![Contratos](docs/prints/contratos.png)
+
+### Vistorias
+
+![Vistorias](docs/prints/vistorias.png)
+
+### Pagamentos
+
+![Pagamentos](docs/prints/pagamentos.png)
+
+### Notas fiscais
+
+![Notas fiscais](docs/prints/notas-fiscais.png)
+
+## Considerações finais
+
+O sistema foi desenvolvido utilizando componentes reutilizáveis, interfaces TypeScript e separação entre as camadas de apresentação, modelos e serviços.
+
+O JSON Server foi utilizado para simular uma API REST e armazenar os dados da aplicação. O projeto possui finalidade acadêmica.
